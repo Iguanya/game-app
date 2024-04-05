@@ -8,7 +8,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 // Create renderer
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setPixelRatio(window.devicePixelRatio);
-renderer.setClearColor(0xaf7c4f);
+renderer.setClearColor(0xa0a0a0);
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
@@ -16,8 +16,8 @@ document.body.appendChild(renderer.domElement);
 const scene = new THREE.Scene();
 
 // Create camera
-const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
-camera.position.set(0, 3, 15); // Adjusted camera position for zooming in
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 2000);
+camera.position.set(0, 2, 15); // Adjusted camera position for zooming in
 
 // Create orbit controls
 const controls = new OrbitControls(camera, renderer.domElement);
@@ -33,19 +33,19 @@ controls.target = new THREE.Vector3(0, 1, 0);
 controls.update();
 
 // Add ground
-const groundMesh = new THREE.Mesh(new THREE.PlaneGeometry(3000, 3000), new THREE.MeshPhongMaterial({ color: 0x999999, depthWrite: false }));
+const groundMesh = new THREE.Mesh(new THREE.PlaneGeometry(300, 300), new THREE.MeshPhongMaterial({ color: 0x999999, depthWrite: false }));
 groundMesh.rotation.x = -Math.PI / 2;
 groundMesh.receiveShadow = true;
 scene.add(groundMesh);
 
-const grid = new THREE.GridHelper(3000, 20, 0x000000, 0x000000);
+const grid = new THREE.GridHelper(300, 20, 0x000000, 0x000000);
 grid.material.opacity = 0.2;
 grid.material.transparent = true;
 scene.add(grid);
 
 // Add directional light for shadows
 const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-directionalLight.position.set(0, 10, 0);
+directionalLight.position.set(0, 200, 100);
 directionalLight.castShadow = true;
 scene.add(directionalLight);
 
@@ -56,11 +56,11 @@ directionalLight.shadow.camera.near = 0.5;
 directionalLight.shadow.camera.far = 50;
 
 // Load GLTF model
-const loader = new GLTFLoader().setPath('./gltf/source');
-loader.load('/map.glb', (gltf) => {
+const loader = new GLTFLoader().setPath('./gltf');
+loader.load('/shack.gltf', (gltf) => {
     const mesh = gltf.scene;
     mesh.position.set(0, 1, -1);
-    mesh.scale.set(2, 2, 2);
+    mesh.scale.set(1, 1, 1);
     mesh.traverse((child) => {
         if (child.isMesh) {
             child.castShadow = true;
@@ -68,7 +68,7 @@ loader.load('/map.glb', (gltf) => {
             child.material = new THREE.MeshPhongMaterial({ color: 0xffffff });
         }
     });
-    scene.add(mesh);
+    //scene.add(mesh);
 });
 
 // Animation loop
