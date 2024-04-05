@@ -5,22 +5,18 @@ import * as THREE from 'three'
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 
-// Set up renderer
+// Prepare renderer, scene, camera, and orbit controls
 const renderer = new THREE.WebGLRenderer({ antialias: true })
 renderer.setPixelRatio(window.devicePixelRatio)
 renderer.setClearColor(0xaf7c4f)
 renderer.setSize(window.innerWidth, window.innerHeight)
 document.body.appendChild(renderer.domElement)
 
-// Set up scene
 const scene = new THREE.Scene()
 
-// Set up camera
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.5, 1000)
 camera.position.set(4, 5, 11)
 
-
-// Set up controls
 const controls = new OrbitControls(camera, renderer.domElement)
 controls.enableDamping = true
 controls.enablePan = false 
@@ -32,9 +28,9 @@ controls.autorotate = false
 controls.target = new THREE.Vector3(0, 1, 0)
 controls.update()
 
-const geometry = new THREE.BoxGeometry( 2, 2, 2 )
-const material = new THREE.MeshBasicMaterial( { color: 0xa1ff00 } )
-const cube = new THREE.Mesh( geometry, material )
+const geometry = new THREE.BoxGeometry(2, 2, 2)
+const material = new THREE.MeshBasicMaterial({ color: 0xa1ff00 })
+const cube = new THREE.Mesh(geometry, material)
 //scene.add(cube)
 
 // Add ground
@@ -59,17 +55,33 @@ loader.load('MultiUVTest.glb', (gltf) => {
     const mesh = gltf.scene
     mesh.position.set(0, 1, -1)
     mesh.scale.set(1, 1, 1)
-    scene.add(gltf.scene)
+    scene.add(mesh)
 })
 
 // Animation loop
 function animate() {
     requestAnimationFrame(animate)
     cube.rotation.x += 0.01
-	//cube.rotation.y += 0.01
+    cube.rotation.y += 0.01
     controls.update() // Update controls in animation loop
     renderer.render(scene, camera)
 }
 
 animate()
-createApp(App).mount('#app')
+
+const mountApplication = () => {
+  const appDiv = document.querySelector("#app")
+  const vueInstance = createApp(App)
+
+  // Initiate and register renderer canvas as a Vue slot
+  const renderCanvas = document.createElement("canvas")
+  renderCanvas.className = "webgl-canvas"
+  appDiv.appendChild(renderCanvas)
+  vueInstance.provide("renderCanvas", renderCanvas)
+
+  // Render the Vue app and mount it
+  vueInstance.mount(appDiv)
+}
+
+// Mount Vue app after Three.js setup
+mountApplication()
