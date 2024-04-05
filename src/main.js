@@ -41,7 +41,7 @@ const groundMaterial = new THREE.MeshBasicMaterial({
     side: THREE.DoubleSide
 })
 const ground = new THREE.Mesh(groundGeometry, groundMaterial)
-scene.add(ground)
+//scene.add(ground)
 
 // Add spot light
 const spotLight = new THREE.SpotLight(0xffffff, 3, 100, 0.2, 0.5)
@@ -51,10 +51,10 @@ scene.add(spotLight)
 
 // Load GLTF model
 const loader = new GLTFLoader().setPath('./gltf/')
-loader.load('MultiUVTest.glb', (gltf) => {
+loader.load('/among_us.glb', (gltf) => {
     const mesh = gltf.scene
-    mesh.position.set(0, 1, -1)
-    mesh.scale.set(1, 1, 1)
+    //mesh.position.set(0, 1, -1)
+    mesh.scale.set(2, 2, 2)
     scene.add(mesh)
 })
 

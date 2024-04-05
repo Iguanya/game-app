@@ -20,7 +20,7 @@ const count = ref(0)
       <span>Cash</span>
       Edit
       <code>components/HelloWorld.vue</code> to test HMR
-    </p>
+  </p>
   </div>
 
   <p>
