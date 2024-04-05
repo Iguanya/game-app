@@ -2,8 +2,8 @@ import { createApp } from 'vue'
 import './style.css'
 import App from './App.vue'
 import * as THREE from 'three'
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 
 // Prepare renderer, scene, camera, and orbit controls
 const renderer = new THREE.WebGLRenderer({ antialias: true })
@@ -14,8 +14,8 @@ document.body.appendChild(renderer.domElement)
 
 const scene = new THREE.Scene()
 
-const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.5, 1000)
-camera.position.set(4, 5, 11)
+const camera = new THREE.PerspectiveCamera(20, window.innerWidth / window.innerHeight, 0.1, 1000)
+camera.position.set(0, 3, 15) // Adjusted camera position for zooming in
 
 const controls = new OrbitControls(camera, renderer.domElement)
 controls.enableDamping = true
@@ -24,45 +24,53 @@ controls.minDistance = 5
 controls.maxDistance = 20
 controls.minPolarAngle = 0.5
 controls.maxPolarAngle = 1.5
-controls.autorotate = false
+controls.autoRotate = false // Changed to autoRotate for rotation control
+controls.autoRotateSpeed = 0.1 // Adjusted rotation speed
 controls.target = new THREE.Vector3(0, 1, 0)
 controls.update()
-
-const geometry = new THREE.BoxGeometry(2, 2, 2)
-const material = new THREE.MeshBasicMaterial({ color: 0xa1ff00 })
-const cube = new THREE.Mesh(geometry, material)
-//scene.add(cube)
 
 // Add ground
 const groundGeometry = new THREE.PlaneGeometry(20, 20, 32, 32)
 groundGeometry.rotateX(-Math.PI / 2)
-const groundMaterial = new THREE.MeshBasicMaterial({
+const groundMaterial = new THREE.MeshPhongMaterial({
     color: 0x555555,
     side: THREE.DoubleSide
 })
 const ground = new THREE.Mesh(groundGeometry, groundMaterial)
-//scene.add(ground)
+ground.receiveShadow = true
+scene.add(ground)
 
-// Add spot light
-const spotLight = new THREE.SpotLight(0xffffff, 3, 100, 0.2, 0.5)
-spotLight.position.set(0, 25, 0)
-spotLight.intensity = 1
-scene.add(spotLight)
+// Add directional light for shadows
+const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+directionalLight.position.set(0, 10, 0);
+directionalLight.castShadow = true;
+scene.add(directionalLight);
+
+// Set up shadow properties for the light
+directionalLight.shadow.mapSize.width = 1024;
+directionalLight.shadow.mapSize.height = 1024;
+directionalLight.shadow.camera.near = 0.5;
+directionalLight.shadow.camera.far = 50;
 
 // Load GLTF model
-const loader = new GLTFLoader().setPath('./gltf/')
-loader.load('/among_us.glb', (gltf) => {
+const loader = new GLTFLoader().setPath('./gltf/source')
+loader.load('/map.glb', (gltf) => {
     const mesh = gltf.scene
-    //mesh.position.set(0, 1, -1)
+    mesh.position.set(0, 1, -1)
     mesh.scale.set(2, 2, 2)
+    mesh.traverse((child) => {
+        if (child.isMesh) {
+            child.castShadow = true;
+            child.receiveShadow = true;
+            child.material = new THREE.MeshPhongMaterial({ color: 0xffffff });
+        }
+    });
     scene.add(mesh)
 })
 
 // Animation loop
 function animate() {
     requestAnimationFrame(animate)
-    cube.rotation.x += 0.01
-    cube.rotation.y += 0.01
     controls.update() // Update controls in animation loop
     renderer.render(scene, camera)
 }
