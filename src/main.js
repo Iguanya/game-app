@@ -1,3 +1,6 @@
+import { createApp } from 'vue'
+import './style.css'
+import App from './App.vue'
 import * as THREE from 'three'
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
@@ -15,13 +18,13 @@ const scene = new THREE.Scene()
 // Set up camera
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.5, 1000)
 camera.position.set(4, 5, 11)
-camera.lookAt(0, 0, 0)
+
 
 // Set up controls
 const controls = new OrbitControls(camera, renderer.domElement)
 controls.enableDamping = true
-controls.enablePan = false
-controls.minDistance = 2
+controls.enablePan = false 
+controls.minDistance = 5
 controls.maxDistance = 20
 controls.minPolarAngle = 0.5
 controls.maxPolarAngle = 1.5
@@ -46,7 +49,7 @@ scene.add(ground)
 
 // Add spot light
 const spotLight = new THREE.SpotLight(0xffffff, 3, 100, 0.2, 0.5)
-spotLight.position.set(0, 0, 0)
+spotLight.position.set(0, 25, 0)
 spotLight.intensity = 1
 scene.add(spotLight)
 
@@ -69,3 +72,4 @@ function animate() {
 }
 
 animate()
+createApp(App).mount('#app')
