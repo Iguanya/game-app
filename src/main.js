@@ -3,7 +3,7 @@ import './style.css';
 import App from './App.vue';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-//import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js';
+//import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js'; // Import FBXLoader
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
 // Constants
@@ -57,7 +57,7 @@ directionalLight.shadow.camera.far = 50;
 let gltfMesh;
 
 const loader = new GLTFLoader().setPath('./gltf');
-loader.load('sango.gltf', (gltf) => {
+loader.load('MultiUVTest.glb', (gltf) => {
     const mesh = gltf.scene;
     mesh.position.set(0, 1, -1);
     mesh.scale.set(1, 1, 1);
@@ -125,7 +125,7 @@ function updateControlsTarget(position) {
     controls.target.copy(position);
 }
 
-/* const fbxLoader = new FBXLoader().setPath('./gltf/fbx');
+/* const fbxLoader = new FBXLoader().setPath('./gltf/fbx'); // Create FBXLoader instance
 fbxLoader.load('/run.fbx', (object) => {
     object.position.set(0, 0, 0);
     scene.add(object);
