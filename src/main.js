@@ -67,7 +67,7 @@ loader.load('/shaft2.gltf', (gltf) => {
         if (child.isMesh) {
             child.castShadow = true;
             child.receiveShadow = false;
-            child.material = new THREE.MeshPhongMaterial({ color: 0xffffff });
+            //child.material = new THREE.MeshPhongMaterial({ color: 0x11ff11, emissive: 0xff336fff });
         }
     });
     scene.add(gltfMesh);
