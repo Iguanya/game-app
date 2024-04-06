@@ -47,7 +47,7 @@ grid.material.transparent = true;
 scene.add(grid);
 
 const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-directionalLight.position.set(0, 200, 100);
+directionalLight.position.set(200, 200, 200);
 directionalLight.castShadow = true;
 scene.add(directionalLight);
 
@@ -59,10 +59,10 @@ directionalLight.shadow.camera.far = 50;
 let gltfMesh;
 
 const loader = new GLTFLoader().setPath('./gltf');
-loader.load('/sango.gltf', (gltf) => {
+loader.load('/buildings.glb', (gltf) => {
     gltfMesh = gltf.scene;
     gltfMesh.position.set(0, -1, -1);
-    gltfMesh.scale.set(5, 5, 5);
+    gltfMesh.scale.set(2, 2, 2);
     gltfMesh.traverse((child) => {
         if (child.isMesh) {
             child.castShadow = true;
