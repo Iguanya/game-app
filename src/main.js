@@ -57,7 +57,7 @@ directionalLight.shadow.camera.far = 50;
 let gltfMesh;
 
 const loader = new GLTFLoader().setPath('./gltf');
-loader.load('/shaft2.gltf', (gltf) => {
+loader.load('sango.gltf', (gltf) => {
     const mesh = gltf.scene;
     mesh.position.set(0, 1, -1);
     mesh.scale.set(1, 1, 1);
