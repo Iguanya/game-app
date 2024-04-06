@@ -1,11 +1,9 @@
-// main.js
-
 import { createApp } from 'vue';
 import './style.css';
 import App from './App.vue';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js';
+//import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
 // Constants
@@ -127,11 +125,11 @@ function updateControlsTarget(position) {
     controls.target.copy(position);
 }
 
-const fbxLoader = new FBXLoader().setPath('./gltf/fbx');
+/* const fbxLoader = new FBXLoader().setPath('./gltf/fbx');
 fbxLoader.load('/run.fbx', (object) => {
     object.position.set(0, 0, 0);
     scene.add(object);
-});
+}); */
 
 function animate() {
     requestAnimationFrame(animate);
