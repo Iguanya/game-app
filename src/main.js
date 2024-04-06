@@ -57,18 +57,18 @@ directionalLight.shadow.camera.far = 50;
 
 // Load GLTF model
 const loader = new GLTFLoader().setPath('./gltf');
-loader.load('/shack.gltf', (gltf) => {
+loader.load('/shaft2.gltf', (gltf) => {
     const mesh = gltf.scene;
     mesh.position.set(0, 1, -1);
     mesh.scale.set(1, 1, 1);
     mesh.traverse((child) => {
         if (child.isMesh) {
             child.castShadow = true;
-            child.receiveShadow = true;
+            child.receiveShadow = false;
             child.material = new THREE.MeshPhongMaterial({ color: 0xffffff });
         }
     });
-    //scene.add(mesh);
+    scene.add(mesh);
 });
 
 // Animation loop
