@@ -60,17 +60,10 @@ let gltfMesh;
 
 const loader = new GLTFLoader().setPath('./gltf');
 loader.load('/shaft2.gltf', (gltf) => {
-<<<<<<< HEAD
     const mesh = gltf.scene;
     mesh.position.set(0, 1, -1);
     mesh.scale.set(1, 1, 1);
     mesh.traverse((child) => {
-=======
-    gltfMesh = gltf.scene;
-    gltfMesh.position.set(0, 1, -1);
-    gltfMesh.scale.set(1, 1, 1);
-    gltfMesh.traverse((child) => {
->>>>>>> 0444f1d5f679d20175978ca2fe766e9e83df7681
         if (child.isMesh) {
             child.castShadow = true;
             child.receiveShadow = false;
