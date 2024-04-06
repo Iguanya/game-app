@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue'
-//import { moveCharacter } from '/src/main.js' // Import the handleMovement function from main.js
+import { moveCharacter } from '/src/main.js' // Import the handleMovement function from main.js
 
 defineProps({
   msg: String,

@@ -73,6 +73,16 @@ loader.load('/buildings.glb', (gltf) => {
     scene.add(gltfMesh);
 });
 
+let characterMesh; // Variable to hold the first-person character mesh
+
+// Load the first-person character model
+const characterLoader = new GLTFLoader().setPath('./gltf');
+characterLoader.load('/MultiUVTest.glb', (gltf) => {
+    characterMesh = gltf.scene;
+    characterMesh.position.set(0, 0, 0); // Set initial position
+    scene.add(characterMesh);
+});
+
 document.addEventListener('keydown', handleKeyDown);
 
 function handleKeyDown(event) {
@@ -99,10 +109,10 @@ export function moveCharacter(direction) {
 
     switch (direction) {
         case 'forward':
-            gltfMesh.position.z -= MOVEMENT_SPEED;
+            gltfMesh.position.z += MOVEMENT_SPEED;
             break;
         case 'backward':
-            gltfMesh.position.z += MOVEMENT_SPEED;
+            gltfMesh.position.z -= MOVEMENT_SPEED;
             break;
         case 'left':
             gltfMesh.position.x -= MOVEMENT_SPEED;
@@ -117,10 +127,19 @@ export function moveCharacter(direction) {
     updateCameraPosition(gltfMesh.position);
     updateControlsTarget(gltfMesh.position);
 }
+// Update camera position to follow the characterMesh
+function updateCameraPosition() {
+    if (!characterMesh) return;
 
-function updateCameraPosition(position) {
-    camera.position.copy(position.clone().add(new THREE.Vector3(0, 2, 15)));
-    camera.lookAt(position);
+    const distance = 15; // Distance between camera and character
+    const height = 2; // Height of the camera above the character
+
+    const characterPosition = characterMesh.position.clone();
+    const cameraOffset = new THREE.Vector3(0, height, distance);
+    const cameraPosition = characterPosition.clone().add(cameraOffset);
+
+    camera.position.copy(cameraPosition);
+    camera.lookAt(characterPosition);
 }
 
 function updateControlsTarget(position) {
