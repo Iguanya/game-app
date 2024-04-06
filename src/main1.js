@@ -19,7 +19,7 @@ scene.add( cube )
 
 const loader = new GLTFLoader();
 loader.load( 
-    './gltf/WalkingLady.gltf', 
+    './gltf/scene.gltf', 
     function ( gltf ) {
         scene.add( gltf.scene );
     },

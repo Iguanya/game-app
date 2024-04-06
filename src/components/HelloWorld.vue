@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue'
-import { moveCharacter } from '/src/main.js' // Import the handleMovement function from main.js
+//import { moveCharacter } from '/src/main.js' // Import the handleMovement function from main.js
 
 defineProps({
   msg: String,
@@ -23,7 +23,7 @@ const count = ref(0)
       <code>components/HelloWorld.vue</code> to test HMR
     </p>
 
-    <!-- Buttons for character movements -->
+    <!-- Buttons for chara//cter movements -->
     <div>
       <button @click="moveCharacter('forward')">Forward</button>
       <button @click="moveCharacter('backward')">Backward</button>
