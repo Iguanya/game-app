@@ -59,9 +59,9 @@ directionalLight.shadow.camera.far = 50;
 let gltfMesh;
 
 const loader = new GLTFLoader().setPath('./gltf');
-loader.load('/scene.gltf', (gltf) => {
+loader.load('/sango.gltf', (gltf) => {
     gltfMesh = gltf.scene;
-    gltfMesh.position.set(0, 1, -1);
+    gltfMesh.position.set(0, -1, -1);
     gltfMesh.scale.set(5, 5, 5);
     gltfMesh.traverse((child) => {
         if (child.isMesh) {
