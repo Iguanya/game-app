@@ -45,13 +45,13 @@ scene.add(grid);
 
 const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
 directionalLight.position.set(200, 200, 200);
+directionalLight.target.position.set(0, 0, 0);
 directionalLight.castShadow = true;
-scene.add(directionalLight);
-
 directionalLight.shadow.mapSize.width = 1024;
 directionalLight.shadow.mapSize.height = 1024;
 directionalLight.shadow.camera.near = 0.5;
 directionalLight.shadow.camera.far = 50;
+scene.add(directionalLight);
 
 let gltfMesh;
 let characterMesh; // Variable to hold the first-person character mesh
