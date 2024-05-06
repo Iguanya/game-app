@@ -6,7 +6,8 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
 // Constants
-const MOVEMENT_SPEED = 0.4;
+const MOVEMENT_SPEED = 0.8;
+const MOUSE_SENSITIVITY = 0.02;
 
 // Three.js setup
 const renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -17,23 +18,28 @@ document.body.appendChild(renderer.domElement);
 
 const scene = new THREE.Scene();
 
-const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 2000);
-camera.position.set(0, 2, 15);
-camera.lookAt(new THREE.Vector3(0, 0, 0));
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+camera.position.set(0, 5, 0); // Adjust camera position to be on top of the character
 
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
-controls.enablePan = false;
-controls.minDistance = 5;
+controls.dampingFactor = 0.25;
+controls.screenSpacePanning = false;
+controls.maxPolarAngle = Math.PI / 2;
+controls.minDistance = 1;
 controls.maxDistance = 20;
-controls.minPolarAngle = 0.5;
-controls.maxPolarAngle = 1.5;
-controls.autoRotate = false;
-controls.autoRotateSpeed = 0.1;
-controls.target = new THREE.Vector3(0, 1, 0);
+controls.target.set(0, 2, 0);
 controls.update();
 
-const groundMesh = new THREE.Mesh(new THREE.PlaneGeometry(300, 300), new THREE.MeshPhongMaterial({ color: 0x999999, depthWrite: false }));
+let mouseX = 0, mouseY = 0;
+document.addEventListener('mousemove', onDocumentMouseMove, false);
+
+function onDocumentMouseMove(event) {
+    mouseX = (event.clientX / window.innerWidth) * 2 - 1;
+    mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
+}
+
+const groundMesh = new THREE.Mesh(new THREE.PlaneGeometry(300, 300), new THREE.MeshPhongMaterial({ color: 0x999999, depthWrite: true }));
 groundMesh.rotation.x = -Math.PI / 2;
 groundMesh.receiveShadow = true;
 scene.add(groundMesh);
@@ -54,7 +60,7 @@ directionalLight.shadow.camera.far = 50;
 scene.add(directionalLight);
 
 let gltfMesh;
-let characterMesh; // Variable to hold the first-person character mesh
+let characterMesh;
 
 const loader = new GLTFLoader().setPath('./gltf');
 loader.load('/buildings.glb', (gltf) => {
@@ -73,22 +79,15 @@ loader.load('/buildings.glb', (gltf) => {
 const characterLoader = new GLTFLoader().setPath('./gltf');
 characterLoader.load('/MultiUVTest.glb', (gltf) => {
     characterMesh = gltf.scene;
-    characterMesh.position.set(0, 4, 0);
+    characterMesh.position.set(0, 0, 0); // Adjusted initial position to be on top of the ground mesh
     scene.add(characterMesh);
 
-    // Add method to characterMesh to update camera position
-    characterMesh.updateCameraPosition = function() {
-        const distance = 15; // Distance between camera and character
-        const height = 2; // Height of the camera above the character
-
-        const characterPosition = characterMesh.position.clone();
-        const cameraOffset = new THREE.Vector3(0, height, distance);
-        const cameraPosition = characterPosition.clone().add(cameraOffset);
-
-        camera.position.copy(cameraPosition);
-        camera.lookAt(characterPosition);
-    };
+    // Mount camera on top of the character
+    characterMesh.add(camera);
+    camera.position.set(0, 2, 0); // Adjust camera position relative to character
 });
+
+document.addEventListener('keydown', handleKeyDown);
 
 document.addEventListener('keydown', handleKeyDown);
 
@@ -114,30 +113,28 @@ function handleKeyDown(event) {
 export function moveCharacter(direction) {
     if (!gltfMesh || !characterMesh) return;
 
+    // Get the character's forward and right vectors based on its orientation
+    const forward = new THREE.Vector3(0, 0, -1).applyQuaternion(characterMesh.quaternion);
+    const right = new THREE.Vector3(1, 0, 0).applyQuaternion(characterMesh.quaternion);
+
     switch (direction) {
         case 'forward':
-            characterMesh.position.z -= MOVEMENT_SPEED;
+            characterMesh.position.add(forward.clone().multiplyScalar(MOVEMENT_SPEED)); // Move forward along the character's facing direction
             break;
         case 'backward':
-            characterMesh.position.z += MOVEMENT_SPEED;
+            characterMesh.position.add(forward.clone().multiplyScalar(-MOVEMENT_SPEED)); // Move backward opposite to the character's facing direction
             break;
         case 'left':
-            characterMesh.position.x -= MOVEMENT_SPEED;
+            characterMesh.position.add(right.clone().multiplyScalar(-MOVEMENT_SPEED)); // Move left relative to the character's facing direction
             break;
         case 'right':
-            characterMesh.position.x += MOVEMENT_SPEED;
+            characterMesh.position.add(right.clone().multiplyScalar(MOVEMENT_SPEED)); // Move right relative to the character's facing direction
             break;
         default:
             break;
     }
-
-    characterMesh.updateCameraPosition(); // Update camera position
-    updateControlsTarget(characterMesh.position);
 }
 
-function updateControlsTarget(position) {
-    controls.target.copy(position);
-}
 
 function animate() {
     requestAnimationFrame(animate);
