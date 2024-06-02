@@ -28,7 +28,6 @@ import { moveCharacter } from '../moveCharacter.js';
 import { Game } from '../game.js'; // Ensure the path is correct
 
 export default {
-  props: ['msg'],
   setup() {
     const count = ref(0);
     const threeContainer = ref(null);

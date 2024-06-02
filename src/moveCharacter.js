@@ -1,26 +1,38 @@
 import * as THREE from 'three';
-import { MOVEMENT_SPEED } from './main.js'; // Ensure the extension is correct
+import { MOVEMENT_SPEED } from './main.js';
 
-export function moveCharacter(characterMesh, direction) {
-    if (!characterMesh) return;
+export function moveCharacter(characterMesh, direction, camera) {
+    if (!characterMesh || !camera) return;
 
-    const forward = new THREE.Vector3(0, 0, -1).applyQuaternion(characterMesh.quaternion);
-    const right = new THREE.Vector3(1, 0, 0).applyQuaternion(characterMesh.quaternion);
+    const forward = new THREE.Vector3();
+    camera.getWorldDirection(forward);
+
+    const right = new THREE.Vector3();
+    right.crossVectors(forward, camera.up);
+
+    const position = characterMesh.position.clone();
 
     switch (direction) {
         case 'forward':
-            characterMesh.position.add(forward.clone().multiplyScalar(MOVEMENT_SPEED));
+            position.add(forward.clone().multiplyScalar(MOVEMENT_SPEED));
             break;
         case 'backward':
-            characterMesh.position.add(forward.clone().multiplyScalar(-MOVEMENT_SPEED));
+            position.add(forward.clone().multiplyScalar(-MOVEMENT_SPEED));
             break;
         case 'left':
-            characterMesh.position.add(right.clone().multiplyScalar(-MOVEMENT_SPEED));
+            position.add(right.clone().multiplyScalar(-MOVEMENT_SPEED));
             break;
         case 'right':
-            characterMesh.position.add(right.clone().multiplyScalar(MOVEMENT_SPEED));
+            position.add(right.clone().multiplyScalar(MOVEMENT_SPEED));
             break;
         default:
             break;
     }
+
+    // Ensure the character does not move below the ground
+    if (position.y < 1) { // Adjust the minimum y position according to the character's new height
+        position.y = 1;
+    }
+
+    characterMesh.position.copy(position);
 }

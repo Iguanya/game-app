@@ -10,7 +10,7 @@ export class Game {
 
   init() {
     this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    this.camera.position.set(0, 5, 0);
+    this.camera.position.set(0, 4, -8); // Raise the camera a bit higher
 
     this.scene = new THREE.Scene();
     this.scene.background = new THREE.Color(0xA3A3A3);
@@ -55,7 +55,7 @@ export class Game {
     this.controls.maxPolarAngle = Math.PI / 2;
     this.controls.minDistance = 1;
     this.controls.maxDistance = 20;
-    this.controls.target.set(0, 2, 0);
+    this.controls.target.set(0, 2, 0); // Initial target
     this.controls.update();
 
     window.addEventListener('resize', () => this.resize(), false);
@@ -83,7 +83,7 @@ export class Game {
       const fbxLoader = new THREE.FBXLoader();
       fbxLoader.load('/FireFighter.fbx', (fbx) => {
         const fbxMesh = fbx;
-        fbxMesh.position.set(0, 0, 0);
+        fbxMesh.position.set(0, 1, 0); // Raise the character higher from the ground
         fbxMesh.scale.set(0.1, 0.1, 0.1);
         fbxMesh.traverse((child) => {
           if (child.isMesh) {
@@ -108,13 +108,11 @@ export class Game {
       const characterLoader = new THREE.GLTFLoader().setPath('./gltf');
       characterLoader.load('/MultiUVTest.glb', (gltf) => {
         const characterMesh = gltf.scene;
-        characterMesh.position.set(0, 0, 0);
+        characterMesh.position.set(0, 1, 0); // Raise the character higher from the ground
         self.scene.add(characterMesh);
 
-        characterMesh.add(self.camera);
-        self.camera.position.set(0, 2, 0);
-
         self.characterMesh = characterMesh;
+        self.controls.target.copy(self.characterMesh.position); // Set the initial target to the character's position
         document.addEventListener('keydown', (event) => self.handleKeyDown(event));
       });
     } else {
@@ -150,16 +148,16 @@ export class Game {
   handleKeyDown(event) {
     switch (event.code) {
       case 'ArrowUp':
-        moveCharacter(this.characterMesh, 'forward');
+        moveCharacter(this.characterMesh, 'forward', this.camera);
         break;
       case 'ArrowDown':
-        moveCharacter(this.characterMesh, 'backward');
+        moveCharacter(this.characterMesh, 'backward', this.camera);
         break;
       case 'ArrowLeft':
-        moveCharacter(this.characterMesh, 'left');
+        moveCharacter(this.characterMesh, 'left', this.camera);
         break;
       case 'ArrowRight':
-        moveCharacter(this.characterMesh, 'right');
+        moveCharacter(this.characterMesh, 'right', this.camera);
         break;
       default:
         break;
@@ -177,6 +175,13 @@ export class Game {
 
     const delta = this.clock.getDelta();
     if (this.mixer) this.mixer.update(delta);
+
+    // Update the camera position to follow the character smoothly
+    if (this.characterMesh) {
+      const characterPosition = new THREE.Vector3();
+      this.characterMesh.getWorldPosition(characterPosition);
+      this.controls.target.copy(characterPosition); // Update the controls target to the character's position
+    }
 
     this.controls.update();
     this.renderer.render(this.scene, this.camera);
