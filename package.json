@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "nodemon src/server.mjs",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "start": "node src/server.mjs"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
@@ -30,3 +31,4 @@
     "vite-plugin-static-copy": "^1.0.4"
   }
 }
+
